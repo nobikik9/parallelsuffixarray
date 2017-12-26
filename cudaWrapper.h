@@ -17,7 +17,12 @@ public:
         tryFunc(cuModuleLoad, &module, moduleName);
     }
 
-    CUfunction getFunction(const char* func)
+    ~CtxWrapper()
+    {
+        cuCtxDestroy(context);
+    }
+
+    CUfunction getFunction(const char* func) const
     {
         CUfunction ret;
         tryFunc(cuModuleGetFunction, &ret, module, func);
