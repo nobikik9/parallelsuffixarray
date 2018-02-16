@@ -5,20 +5,26 @@
 #include <ctime>
 #include <vector>
 
-int main()
+int main(int argc, char* argv[])
 {
-    int n = 10;
+    srand(std::stoi(argv[1]));
+
+    int n = rand() % 1000 + 1;
     std::string test;
+
     for (int i = 0; i < n; i++)
     {
-        test += rand() % 2 + '0';
+        test += rand() % 26 + 'a';
     }
+
     std::vector<int> a(test.size());
     suffixArray(test, a.data());
-    std::cout << "For string '" << test << "' suffix array is: ";
-    for (int i=0; i<static_cast<int>(test.size()); i++)
+
+    std::cout << test << std::endl;
+
+    for (auto& element : a)
     {
-        std::cout << a[i] << ' ';
+        std::cout << element << ' ';
     }
     std::cout << std::endl;
 }

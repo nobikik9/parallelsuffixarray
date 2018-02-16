@@ -17,13 +17,14 @@ INCLUDES = -I. -I$(CUDA_INSTALL_PATH)/include
 LIB_CUDA := -L/usr/lib/nvidia-current -lcuda
 
 # Common flags
-COMMONFLAGS += $(INCLUDES) -std=c++11
+COMMONFLAGS += $(INCLUDES) -std=c++11 -O2
 NVCCFLAGS += $(COMMONFLAGS) $(NVCCOPTIONS) --expt-extended-lambda
 CXXFLAGS += $(COMMONFLAGS)
 
-OBJS = suffixArray.cu.o main.cpp.o
-TARGET = exec
-LINKLINE = $(LINK) -o $(TARGET) $(OBJS) $(LIB_CUDA)
+EXEC_OBJ = main.cpp.o
+CORR_OBJ = corr.cpp.o
+FAST_OBJ = fast.cpp.o
+OBJS = suffixArray.cu.o
 
 .SUFFIXES:	.cpp	.cu	.o
 %.cu.o: %.cu
@@ -32,8 +33,14 @@ LINKLINE = $(LINK) -o $(TARGET) $(OBJS) $(LIB_CUDA)
 %.cpp.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(TARGET): prepare $(OBJS)
-	$(LINKLINE)
+exec: prepare $(EXEC_OBJ) $(OBJS)
+	$(LINK) -o exec $(OBJS) $(EXEC_OBJ) $(LIB_CUDA)
+
+fast: prepare $(FAST_OBJ) $(OBJS)
+	$(LINK) -o fast $(OBJS) $(FAST_OBJ) $(LIB_CUDA)
+
+corr: prepare $(CORR_OBJ) $(OBJS)
+	$(LINK) -o corr $(OBJS) $(CORR_OBJ) $(LIB_CUDA)
 
 clean:
 	rm -rf $(TARGET) *.o *.ptx
