@@ -6,6 +6,6 @@ int main()
 {
     std::cout << "Hello world!" << std::endl;
     int T[100];
-    suffixArray("abeacadabea", T);
+    suffixArray("abacabaddabacaba", T);
     return 0;
 }

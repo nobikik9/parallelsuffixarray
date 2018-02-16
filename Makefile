@@ -1,11 +1,14 @@
 CUDA_INSTALL_PATH ?= /usr/local/cuda
 GCC_VER =
 
+# Options
+NVCCOPTIONS = -arch sm_30
+
 CXX := /usr/bin/g++$(GCC_VER)
 CC := /usr/bin/gcc$(GCC_VER)
-LINK := $(CXX) -fPIC
 CCPATH := ./gcc
 NVCC  := $(CUDA_INSTALL_PATH)/bin/nvcc -ccbin $(CCPATH)
+LINK := $(NVCC) $(NVCCOPTIONS)
 
 # Includes
 INCLUDES = -I. -I$(CUDA_INSTALL_PATH)/include
@@ -13,27 +16,23 @@ INCLUDES = -I. -I$(CUDA_INSTALL_PATH)/include
 # Libraries
 LIB_CUDA := -L/usr/lib/nvidia-current -lcuda
 
-# Options
-NVCCOPTIONS = -arch sm_20 -ptx
-
 # Common flags
-COMMONFLAGS += $(INCLUDES)
-NVCCFLAGS += $(COMMONFLAGS) $(NVCCOPTIONS)
-CXXFLAGS += $(COMMONFLAGS) -std=c++1z
+COMMONFLAGS += $(INCLUDES) -std=c++11
+NVCCFLAGS += $(COMMONFLAGS) $(NVCCOPTIONS) --expt-extended-lambda
+CXXFLAGS += $(COMMONFLAGS)
 
-CUDA_OBJS = suffixArray.ptx
-OBJS = suffixArray.cpp.o main.cpp.o
+OBJS = suffixArray.cu.o main.cpp.o
 TARGET = exec
 LINKLINE = $(LINK) -o $(TARGET) $(OBJS) $(LIB_CUDA)
 
 .SUFFIXES:	.cpp	.cu	.o
-%.ptx: %.cu
-	$(NVCC) $(NVCCFLAGS) $< -o $@
+%.cu.o: %.cu
+	$(NVCC) $(NVCCFLAGS) -c $< -o $@
 
 %.cpp.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(TARGET): prepare $(OBJS) $(CUDA_OBJS)
+$(TARGET): prepare $(OBJS)
 	$(LINKLINE)
 
 clean:
