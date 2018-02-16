@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
     int print = 0;
 
-    for (int i = 0; i < 10000; i++)
+    for (int i = 0; i < 100000000; i++)
     {
         test += rand() % 2 + '0';
     }
