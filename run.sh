@@ -1,6 +1,6 @@
 #!/bin/sh
 
-BOX=z1121415@miracle.tcs.uj.edu.pl
+BOX=miracle
 ROOT='~/suff'
 set -x
 rsync -auvR -e ssh . "$BOX:$ROOT"
